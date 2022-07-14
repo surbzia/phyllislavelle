@@ -10,7 +10,7 @@
         <div class="col-md-12 " style="padding-right: 64px;">
             <div class="card-box height-100-p widget-style1 p-5">
                 <div class="pb-20">
-                    <form action="{{ $route }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ $route }}" method="POST" id="service-form">
                         @csrf
                         @if ($is_edit)
                             {{ method_field('PUT') }}
@@ -18,13 +18,13 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-12 col-sm-12">
+                                    <div class="col-md-8 col-sm-12">
                                         <div class="form-group">
                                             <label>Service Name</label>
-                                            <input type="text" id="title"
+                                            <input type="text"
                                                 value="{{ old('name', $edit_service['name']) }}"
-                                                class="form-control @error('name') is-invalid @enderror"" name="name"
-                                                placeholder="Service Name">
+                                                class="form-control @error('name') is-invalid @enderror" name="name"
+                                                placeholder="Service Name" id="name" form="service-form">
                                             @error('name')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -32,7 +32,26 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <select name="category_id" id="category_id"  form="service-form" class="form-control @error('category_id') is-invalid @enderror" id="category_id">
+                                                <option value="">Select Categroy</option>
+                                                @foreach ($categories as $category )
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+
+                                                @endforeach
+                                            </select>
+                                            @error('category_id')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                     <label class="text-danger border-bottom col-md-12">Variations</label>
+                                    <button type="button" class="btn btn-light text-dark"  onclick="addVariant()" data-color="#ffffff"><i
+                                            class="m-1 fa fa-plus"></i></button>
                                     <div class="col-md-12" id="variation-area">
                                         {{-- <div class="row">
                                             <div class="col-md-6 col-sm-12">
@@ -59,9 +78,13 @@
                                             </div>
                                         </div> --}}
                                     </div>
+                                    <div class="col-md-12 mt-30">
+                                        <button type="submit" form="service-form" class="btn btn-primary">{{$button}}</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -71,8 +94,12 @@
 @endsection
 @section('script')
     <script>
-        let data ={
-            variations:[1,2,3,4],
+        let data = {
+            name:'',
+            category_id:'',
+            is_active:0,
+            variations: [],
+            variations_count: 0,
         }
 
 
@@ -89,34 +116,30 @@
         function RenderAddVariation() {
 
             data.variations.map(function(item,index){
-                let minus_btn = `<button type="button" class="btn btn-dark d-none" data-color="#ffffff"><i
-                                        class="m-1 fa fa-minus"></i></button>`;
-                let plus_btn = `<button type="button" class="btn btn-light text-dark"
-                                    data-color="#ffffff"><i class="m-1 fa fa-plus"></i></button>`;
-                let buttons = plus_btn;
 
-                let html = `<div class="row">
+                let html = `<div class="row variant_row_${item.id}">
                             <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label>Title</label>
                                     <input type="text" id="title"
-                                        value=" "
-                                        class="form-control" name="title" placeholder="Title">
+                                        value="${item.title}"  form="service-form"
+                                        class="form-control" name="title[]" placeholder="Title">
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-12">
+                            <div class="col-md-4 col-sm-12 ">
                                 <div class="form-group">
                                     <label>Charges</label>
-                                    <input type="number" id="charges"
-                                        value="  "
-                                        class="form-control" name="charges" placeholder="Charges">
+                                    <input type="number" min="0" id="charges"
+                                        value="${item.price}"  form="service-form"
+                                        class="form-control" name="charges[]" placeholder="Charges">
                                 </div>
                             </div>
                             <div class="col-md-2 col-sm-12 pt-30">
-                                ${buttons}
+                               <button type="button" class="btn btn-dark" onclick="RemoveVariant(${item})" data-color="#ffffff"><i
+                                        class="m-1 fa fa-minus"></i></button>
                             </div>
                         </div>`;
-                    $('#variation-area').append(html);
+                $('#variation-area').append(html);
             });
         }
 
@@ -124,7 +147,52 @@
 
         }
 
+        function addVariant() {
+            // data.variations =[];
+             $('#variation-area').html('');
+            data.variations.push({
+                id: data.variations_count++,
+                title:'',
+                price:0
+            });
+            data.variations_count++,
+            RenderAddVariation();
+            console.log(data.variations);
+        }
+        function RemoveVariant(row_index) {
+            console.log(row_index);
+             data.variations.slice(drow_index);
+            data.variations_count--,
+            RenderAddVariation();
+        }
+
+
+
 
         start();
+
+
+
+        $(function () {
+            $('#service-form').submit(function () {
+                // if ($(this)[0].checkValidity()) {
+                    data.category_id = $('#category_id').val();
+                    data.name = $('#name').val();
+
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: $(this).attr('method'),
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            data:data,
+                        },
+                        success: function (response) {
+
+                        },
+                    });
+                // }
+                return false;
+            });
+            });
     </script>
 @endsection

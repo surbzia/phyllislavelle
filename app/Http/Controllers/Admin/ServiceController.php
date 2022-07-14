@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\UserRequest;
 use App\Http\Requests\Admin\VehicleRequest;
 use App\Models\Category;
 use App\Models\Driver;
+use App\Models\Service;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Repositories\FileRepository;
@@ -19,10 +20,10 @@ class ServiceController extends Controller
 
     public function index()
     {
-        // $drivers = Driver::all()->toArray();
-        // return view('admin.driver.index')->with(compact('drivers'));
+        $services = Service::all()->toArray();
+        return view('admin.service.index')->with(compact('services'));
 
-        return view('admin.service.index');
+        // return view('admin.service.index');
     }
 
     /**
@@ -33,11 +34,13 @@ class ServiceController extends Controller
     public function create()
     {
         $obj = new User();
+        $categories = Category::all();
         $data = [
             'is_edit' => false,
             'title' => 'Add Service',
             'button' => 'Submit',
             'route' => route('service.store'),
+            'categories' => $categories,
             'edit_service' => $obj,
         ];
 
@@ -52,11 +55,25 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        $request = $request->all();
-        $request['is_active'] = (isset($request['is_active']) && $request['is_active']) == 'on' ? 1 : 0;
-        Driver::create($request);
+        // $request = json_decode($request->data);
+        // $variations = json_encode($request->variations);
 
-        return redirect()->route('driver.index')->with('success', 'Driver has been added successfully');
+        $request = $request->data;
+
+        $service = new Service();
+        $service->name = $request['name'];
+        $service->category_id = $request['category_id'];
+        $service->is_active = $request['is_active'];
+        $service->save();
+
+        foreach ($request['variations'] as $key => $variation) {
+            $service->variations()->create([
+                'title' => $variation['title'],
+                'price' => $variation['price'],
+            ]);
+        }
+
+        return redirect()->route('service.index')->with('success', 'Service has been added successfully');
     }
 
     /**

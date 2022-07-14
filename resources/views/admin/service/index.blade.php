@@ -14,37 +14,31 @@
                         <thead>
                             <tr>
                                 <th>S#</th>
-                                <th>Unique Id</th>
-                                <th>Title</th>
                                 <th>Name</th>
-                                <th>Email</th>
-                                <th>City</th>
-                                <th>Country</th>
-
+                                <th>Category</th>
+                                <th>Variations Count</th>
                                 <th>Active</th>
                                 <th style="width: 13%;">Action</th>
                             </tr>
                         </thead>
                         <tbody>
 
-                            {{-- @foreach ($drivers as $key => $driver)
+                            @foreach ($services as $key => $service)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $driver['unique_id'] }}</td>
-                                    <td>{{ $driver['title'] }}</td>
-                                    <td>{{ $driver['first_name'] . ' ' . $driver['last_name'] }}</td>
-                                    <td>{{ $driver['email'] }}</td>
-                                    <td>{{ $driver['city'] }}</td>
-                                    <td>{{ $driver['country'] }}</td>
+                                    <td>{{ $service['name'] }}</td>
+                                    <td>{{ $service['name'] }}</td>
+                                    <td>{{ $service['name'] }}</td>
+
                                     <td>
                                         <span
-                                            class="badge badge-pill {{ $driver['is_active'] == 1 ? 'badge-success' : 'badge-danger' }} ">{{ $driver['is_active'] == 1 ? 'True' : 'False' }}</span>
+                                            class="badge badge-pill {{ $service['is_active'] == 1 ? 'badge-success' : 'badge-danger' }} ">{{ $service['is_active'] == 1 ? 'True' : 'False' }}</span>
                                     </td>
                                     <td class="d-flex">
                                         <a class="btn btn-outline-dark btn-sm rounded-pill"
-                                            href="{{ route('driver.edit', $driver['id']) }}">Edit</a>
+                                            href="{{ route('service.edit', $service['id']) }}">Edit</a>
 
-                                        <form method="post" action="{{ route('driver.destroy', $driver['id']) }}"
+                                        <form method="post" action="{{ route('service.destroy', $service['id']) }}"
                                             id="driver_delete_form">
                                             @method('delete')
                                             @csrf
@@ -53,7 +47,7 @@
                                         </form>
                                     </td>
                                 </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

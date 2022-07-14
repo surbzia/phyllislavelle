@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ServiceController;
@@ -25,6 +26,9 @@ Route::get('/', function () {
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::resource('service', ServiceController::class);
+    Route::resource('category', CategoryController::class);
+    Route::post('category/update_category', [CategoryController::class, 'update_category'])->name('category.update_category');
+
 });
 
 

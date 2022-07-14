@@ -22,6 +22,12 @@
                  </li>
 
                  <li>
+                     <a href="{{ route('category.index') }}" class="dropdown-toggle no-arrow">
+                         <span class="micon dw dw-calendar-11"></span>
+                         <span class="mtext">Category</span>
+                     </a>
+                 </li>
+                 <li>
                      <a href="{{ route('service.index') }}" class="dropdown-toggle no-arrow">
                          <span class="micon dw dw-calendar-11"></span>
                          <span class="mtext">Services</span>
