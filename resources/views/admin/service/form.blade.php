@@ -187,7 +187,12 @@
                             data:data,
                         },
                         success: function (response) {
-
+                        if(response.IsValid){
+                        toastr.success(response.Message, 'Success');
+                         setTimeout(() => {
+                            window.location.href = "{{ route('service.index')}}";
+                          }, 1000);
+                        }
                         },
                     });
                 // }

@@ -13,7 +13,7 @@
                     <table id="permission" class="row-border" style="width:80%:">
                         <thead>
                             <tr>
-                                <th>S#</th>
+                                <th>Id</th>
                                 <th>Name</th>
                                 <th>Category</th>
                                 <th>Variations Count</th>
@@ -25,10 +25,10 @@
 
                             @foreach ($services as $key => $service)
                                 <tr>
-                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $service['id'] }}</td>
                                     <td>{{ $service['name'] }}</td>
-                                    <td>{{ $service['name'] }}</td>
-                                    <td>{{ $service['name'] }}</td>
+                                    <td>{{ $service['category_name'] }}</td>
+                                    <td>{{ $service['variation_count'] }}</td>
 
                                     <td>
                                         <span
@@ -39,7 +39,7 @@
                                             href="{{ route('service.edit', $service['id']) }}">Edit</a>
 
                                         <form method="post" action="{{ route('service.destroy', $service['id']) }}"
-                                            id="driver_delete_form">
+                                            id="service_delete_form">
                                             @method('delete')
                                             @csrf
                                             <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill"
@@ -59,8 +59,8 @@
     <script>
         function deleteItem(event) {
             event.preventDefault();
-            if (confirm('Are you sure you want to delete this driver.??')) {
-                $('#driver_delete_form').submit();
+            if (confirm('Are you sure you want to delete this Service.??')) {
+                $('#service_delete_form').submit();
             }
 
         }

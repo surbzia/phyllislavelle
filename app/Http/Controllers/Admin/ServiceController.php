@@ -20,7 +20,7 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $services = Service::all()->toArray();
+        $services = Service::withCount('variation')->get()->toArray();
         return view('admin.service.index')->with(compact('services'));
 
         // return view('admin.service.index');
@@ -67,13 +67,13 @@ class ServiceController extends Controller
         $service->save();
 
         foreach ($request['variations'] as $key => $variation) {
-            $service->variations()->create([
+            $service->variation()->create([
                 'title' => $variation['title'],
                 'price' => $variation['price'],
             ]);
         }
 
-        return redirect()->route('service.index')->with('success', 'Service has been added successfully');
+        return response()->json(['IsValid' => true, 'Message' => 'Service has been added successfully']);
     }
 
     /**
@@ -126,9 +126,9 @@ class ServiceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Driver $driver)
+    public function destroy(Service $service)
     {
-        $driver->delete();
-        return redirect()->route('driver.index')->with('success', 'Driver has been deleted successfully');
+        $service->delete();
+        return redirect()->route('service.index')->with('success', 'Service has been deleted successfully');
     }
 }
